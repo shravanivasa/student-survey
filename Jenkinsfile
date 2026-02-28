@@ -10,11 +10,12 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/shravanivasa/student-survey.git'
             }
         }
-        stage('Build') {
-            steps {
-                sh 'docker build -t $DOCKER_IMAGE -f Dockerfile .'
-            }
-        }
+      stage('Build') {
+    steps {
+        sh 'docker logout || true'
+        sh 'docker build -t $DOCKER_IMAGE -f Dockerfile .'
+    }
+}
         stage('Push') {
     steps {
         withCredentials([usernamePassword(
