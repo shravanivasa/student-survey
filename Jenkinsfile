@@ -16,10 +16,17 @@ pipeline {
             }
         }
         stage('Push') {
-            steps {
-                sh 'docker push $DOCKER_IMAGE'
-            }
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerhub-creds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+            sh 'docker push $DOCKER_IMAGE'
         }
+    }
+}
         stage('Deploy') {
             steps {
                 sh 'kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/student-survey'
